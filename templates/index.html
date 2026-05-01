@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Spam Detection System using Naive Bayes Classifier — PSP Project. Real-time probabilistic message analysis.">
+  <title>Spam Detection — PSP Project</title>
+
+  <!-- Inter (Closest to Helvetica Neue) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+
+  <!-- Chart.js -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.4/dist/chart.umd.min.js"></script>
+
+  <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+
+  <!-- ══════════════════════════════════════
+       HEADER — Full-bleed Swiss masthead
+       ══════════════════════════════════════ -->
+  <header id="app-header" aria-label="Site header">
+    <div class="header-grid">
+      <!-- Left: Vertical meta label -->
+      <div class="header-meta">
+        <span class="meta-label">PSP PROJECT</span>
+        <span class="meta-label">NAIVE BAYES</span>
+        <span class="meta-label">2026</span>
+      </div>
+
+      <!-- Centre: Massive headline -->
+      <div class="header-title">
+        <p class="header-eyebrow"><span class="accent">01.</span> SYSTEM</p>
+        <h1>SPAM<br>DETECT<span class="accent">.</span></h1>
+      </div>
+
+      <!-- Right: Descriptor block -->
+      <div class="header-desc">
+        <p class="header-descriptor">
+          Real-time probabilistic classification using Bayes' Theorem
+          and Multinomial Naive Bayes on 5,572 labelled messages.
+        </p>
+        <div class="header-rule"></div>
+        <p class="header-sub">POST /predict · GET /stats</p>
+      </div>
+    </div>
+
+    <!-- Bottom strip -->
+    <div class="header-strip">
+      <span>INTERNATIONAL TYPOGRAPHIC STYLE</span>
+      <span class="accent">■</span>
+      <span>PROBABILISTIC SPAM CLASSIFICATION</span>
+      <span class="accent">■</span>
+      <span>NAIVE BAYES CLASSIFIER</span>
+    </div>
+  </header>
+
+  <main id="main-content">
+
+    <!-- ══════════════════════════════════════
+         SECTION 01 — INPUT
+         ══════════════════════════════════════ -->
+    <section id="input-section" class="swiss-section" aria-labelledby="input-heading">
+      <div class="section-label-col">
+        <span class="section-number accent">01.</span>
+        <span class="section-name">ANALYZE</span>
+        <div class="section-vline"></div>
+      </div>
+
+      <div class="section-body">
+        <h2 id="input-heading" class="section-title">ENTER MESSAGE</h2>
+        <p class="section-desc">Paste or type any message. Press <kbd>⌘ Enter</kbd> or click the button.</p>
+
+        <textarea
+          id="message-input"
+          placeholder="Enter your message here..."
+          rows="5"
+          aria-label="Message to analyze for spam"
+          spellcheck="false"
+        ></textarea>
+
+        <button id="check-btn" onclick="checkSpam()" aria-live="polite">
+          <span class="btn-text">CHECK SPAM</span>
+          <span class="btn-loader" id="btn-loader" aria-hidden="true"></span>
+          <span class="btn-arrow" aria-hidden="true">→</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         SECTION 02 — RESULT (hidden until prediction)
+         ══════════════════════════════════════ -->
+    <section id="output-section" class="swiss-section hidden" aria-labelledby="output-heading" aria-live="polite">
+      <div class="section-label-col">
+        <span class="section-number accent">02.</span>
+        <span class="section-name">RESULT</span>
+        <div class="section-vline"></div>
+      </div>
+
+      <div class="section-body">
+        <h2 id="output-heading" class="section-title">PREDICTION</h2>
+
+        <!-- Big verdict -->
+        <div id="prediction-badge" class="prediction-badge" role="status">
+          <span id="prediction-icon" class="pred-icon" aria-hidden="true"></span>
+          <span id="prediction-text" class="pred-word"></span>
+        </div>
+
+        <!-- Probability bars -->
+        <div class="prob-grid">
+
+          <div class="prob-row" id="prob-ham-row">
+            <div class="prob-meta">
+              <span class="prob-label">HAM</span>
+              <span class="prob-value" id="ham-value">0%</span>
+            </div>
+            <div class="bar-track" role="progressbar" aria-label="Ham probability" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              <div class="bar-fill ham-bar" id="ham-bar"></div>
+            </div>
+          </div>
+
+          <div class="prob-row" id="prob-spam-row">
+            <div class="prob-meta">
+              <span class="prob-label">SPAM</span>
+              <span class="prob-value" id="spam-value">0%</span>
+            </div>
+            <div class="bar-track" role="progressbar" aria-label="Spam probability" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+              <div class="bar-fill spam-bar" id="spam-bar"></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         SECTION 03 — STATISTICS
+         ══════════════════════════════════════ -->
+    <section id="graph-section" class="swiss-section" aria-labelledby="stats-heading">
+      <div class="section-label-col">
+        <span class="section-number accent">03.</span>
+        <span class="section-name">STATISTICS</span>
+        <div class="section-vline"></div>
+      </div>
+
+      <div class="section-body">
+        <h2 id="stats-heading" class="section-title">DATASET & MODEL</h2>
+
+        <!-- Stat counters -->
+        <div class="stats-row" id="stats-summary">
+          <div class="stat-block" id="stat-ham">
+            <span class="stat-number" id="stat-ham-count">—</span>
+            <span class="stat-label">HAM MESSAGES</span>
+          </div>
+          <div class="stat-block" id="stat-spam">
+            <span class="stat-number" id="stat-spam-count">—</span>
+            <span class="stat-label">SPAM MESSAGES</span>
+          </div>
+          <div class="stat-block stat-block--accent" id="stat-acc">
+            <span class="stat-number" id="stat-accuracy">—</span>
+            <span class="stat-label">MODEL ACCURACY</span>
+          </div>
+        </div>
+
+        <!-- Charts grid -->
+        <div class="charts-grid">
+          <div class="chart-cell">
+            <p class="chart-label">DISTRIBUTION</p>
+            <canvas id="distribution-chart" aria-label="Spam vs Ham distribution bar chart" role="img"></canvas>
+          </div>
+          <div class="chart-cell">
+            <p class="chart-label">CONFUSION MATRIX</p>
+            <canvas id="confusion-chart" aria-label="Confusion matrix chart" role="img"></canvas>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ══════════════════════════════════════
+         SECTION 04 — PSP EXPLANATION
+         ══════════════════════════════════════ -->
+    <section id="psp-explanation" class="swiss-section" aria-labelledby="method-heading">
+      <div class="section-label-col">
+        <span class="section-number accent">04.</span>
+        <span class="section-name">METHOD</span>
+        <div class="section-vline"></div>
+      </div>
+
+      <div class="section-body">
+        <h2 id="method-heading" class="section-title">BAYES' THEOREM</h2>
+        <p class="section-desc">
+          This system uses <strong>Bayes' Theorem</strong> to compute the probability
+          of a message being spam given the words it contains.
+        </p>
+
+        <!-- Formula block -->
+        <div class="formula-block">
+          <span class="formula-label">POSTERIOR PROBABILITY</span>
+          <code class="formula">P(Spam | Words) = P(Words | Spam) × P(Spam) / P(Words)</code>
+        </div>
+
+        <!-- Method steps -->
+        <div class="method-grid">
+          <div class="method-cell">
+            <span class="method-num accent">I.</span>
+            <h3 class="method-title">COUNT VECTORIZER</h3>
+            <p class="method-desc">Converts raw text into a numerical word-frequency vector. Each unique word becomes a feature dimension.</p>
+          </div>
+          <div class="method-cell">
+            <span class="method-num accent">II.</span>
+            <h3 class="method-title">MULTINOMIAL NB</h3>
+            <p class="method-desc">Learns word probability distributions per class. Words seen more in spam raise the posterior probability.</p>
+          </div>
+          <div class="method-cell">
+            <span class="method-num accent">III.</span>
+            <h3 class="method-title">CLASSIFICATION</h3>
+            <p class="method-desc">Computes posterior for Ham and Spam independently. The class with the higher posterior is selected.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ══════════════════════════════════════
+       FOOTER
+       ══════════════════════════════════════ -->
+  <footer id="app-footer">
+    <div class="footer-inner">
+      <span class="footer-brand">PSP PROJECT <span class="accent">■</span> SPAM DETECTION</span>
+      <span class="footer-copy">NAIVE BAYES CLASSIFIER · <span class="accent">98.39% ACCURACY</span></span>
+    </div>
+  </footer>
+
+  <script src="/static/script.js"></script>
+</body>
+</html>
