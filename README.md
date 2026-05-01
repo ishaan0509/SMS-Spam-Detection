@@ -1,47 +1,41 @@
 # 📩 Spam Detection using Probability (PSP Project)
 
-A web-based spam detection system built using **Naive Bayes Classification**, demonstrating real-world application of **Probability and Stochastic Processes (PSP)**.
+A full-stack web application that classifies messages as **Spam** or **Ham (legitimate)** using **Naive Bayes Classification**, demonstrating real-world applications of **Probability and Stochastic Processes (PSP)**.
 
 ---
 
 ## 🚀 Project Overview
 
-This project classifies text messages as **Spam** or **Ham (legitimate)** using probabilistic modeling. It applies **Bayes’ Theorem** to compute the likelihood of a message being spam based on its content.
-
-The system is implemented with:
-
-* 🧠 Machine Learning (Naive Bayes)
-* 📊 Probability Theory (PSP concepts)
-* 🌐 Web Interface (Flask + HTML/CSS/JS)
+This project applies **Bayes’ Theorem** to determine the probability that a message is spam based on its content.
+It combines **Machine Learning + Probability Theory + Web Development** into an interactive system.
 
 ---
 
-## 🧠 PSP Concepts Used
+## 🧠 PSP Concepts Demonstrated
 
 * Conditional Probability
 * Bayes’ Theorem
 * Prior & Posterior Probability
 * Random Sampling (Train-Test Split)
 * Decision Making Under Uncertainty
+* Stochastic Behavior (model variation on retraining)
 
 ---
 
 ## ⚙️ Tech Stack
 
-**Backend:**
+**Backend**
 
 * Python
 * Flask
 * scikit-learn
 * pandas
 
-**Frontend:**
+**Frontend**
 
-* HTML
-* CSS (Warm UI theme)
-* JavaScript
+* HTML, CSS, JavaScript
 
-**Visualization:**
+**Visualization**
 
 * Matplotlib
 * Chart.js
@@ -67,29 +61,133 @@ The system is implemented with:
 
 ## 📊 Features
 
-* 🔍 Classifies messages as **Spam or Ham**
-* 📈 Displays **probability scores**
-* 📊 Shows dataset distribution (Spam vs Ham)
+* 🔍 Spam/Ham classification using Naive Bayes
+* 📈 Posterior probability display (Spam vs Ham)
+* 🎯 Confidence estimation (high / medium / low)
+* 🔁 Retrain option to demonstrate stochastic variation
+* 🧩 Word-level contribution insights
+* 📊 Dataset distribution visualization
 * 🧪 Interactive message testing
-* 🎨 Clean UI with warm color theme
 
 ---
 
-## ▶️ How to Run
+## ⚙️ How It Works
 
-### 1. Install dependencies
+1. Input message is converted to numerical form using **CountVectorizer**
+2. Naive Bayes computes:
+
+   * P(Spam | Message)
+   * P(Ham | Message)
+3. Model compares probabilities and selects the higher one
+4. Output includes prediction + confidence
+
+This directly applies **Bayes’ Theorem** for probabilistic inference.
+
+---
+
+## 📊 Model Performance
+
+* Algorithm: Multinomial Naive Bayes
+* Dataset: SMS Spam Collection
+* Accuracy: ~97–99% (varies slightly due to randomness)
+
+---
+
+## 🔗 API Endpoints
+
+### POST /predict
+
+**Input**
+
+```json
+{
+  "message": "Free money now"
+}
+```
+
+**Output**
+
+```json
+{
+  "prediction": "Spam",
+  "prob_spam": 0.98,
+  "prob_ham": 0.02
+}
+```
+
+---
+
+### POST /retrain
+
+* Retrains model with random split
+* Returns updated accuracy
+
+---
+
+## 🧪 Example Inputs
+
+**Spam**
+
+* "Congratulations! You won a free iPhone"
+* "Earn money fast!!! Click now"
+
+**Ham**
+
+* "Are we meeting today?"
+* "Send me the notes"
+
+---
+
+## 📸 Screenshots
+
+*Add screenshots here for better visualization*
 
 ```
+screenshots/home.png
+screenshots/prediction.png
+```
+
+---
+
+## ⚠️ Limitations
+
+* Assumes independence between words (Naive assumption)
+* Performance depends on dataset quality
+* May misclassify ambiguous messages
+
+---
+
+## 🚀 Future Scope
+
+* Deep learning models (LSTM, BERT)
+* Real-time SMS/email filtering
+* Deployment as web/mobile app
+* Multilingual spam detection
+
+---
+
+## 💡 Why This Project Matters
+
+Spam detection is widely used in:
+
+* Email filtering systems
+* Messaging platforms
+* Cybersecurity
+
+This project demonstrates how **probability theory is applied in real-world intelligent systems**.
+
+---
+
+## 🛠 Setup Instructions
+
+```bash
+git clone https://github.com/ishaan0509/SMS-Spam-Detection.git
+cd SMS-Spam-Detection
 pip install flask pandas scikit-learn matplotlib
-```
-
-### 2. Run the app
-
-```
 python app.py
 ```
 
-### 3. Open in browser
+Then open:
 
 ```
 http://127.0.0.1:5000/
@@ -97,42 +195,11 @@ http://127.0.0.1:5000/
 
 ---
 
-## 🧪 Example Inputs
+## 📚 References
 
-**Spam:**
-
-* "Congratulations! You won a free iPhone"
-* "Earn money fast!!! Click now"
-
-**Ham:**
-
-* "Are we meeting today?"
-* "Send me the notes"
-
----
-
-## 📈 Sample Output
-
-* Prediction: **SPAM / HAM**
-* Probability:
-
-  * Spam: 0.95
-  * Ham: 0.05
-
----
-
-## 🎯 Key Insight
-
-> This project demonstrates how probabilistic models can be used to make decisions under uncertainty, a fundamental concept in stochastic processes.
-
----
-
-## 📌 Future Improvements
-
-* Add deep learning models (LSTM, BERT)
-* Deploy online (Render / Vercel)
-* Improve UI/UX
-* Add multilingual spam detection
+* UCI SMS Spam Dataset
+* scikit-learn documentation
+* Probability Theory (Bayes’ Theorem)
 
 ---
 
@@ -143,6 +210,6 @@ B.Tech EXTC (2nd Year)
 
 ---
 
-## ⭐ If you like this project
+## ⭐ Support
 
-Give it a star on GitHub!
+If you like this project, consider giving it a ⭐ on GitHub!
