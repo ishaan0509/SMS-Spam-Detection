@@ -43,7 +43,7 @@
           and Multinomial Naive Bayes on 5,572 labelled messages.
         </p>
         <div class="header-rule"></div>
-        <p class="header-sub">POST /predict · GET /stats</p>
+        <p class="header-sub">POST /predict · GET /stats · POST /retrain</p>
       </div>
     </div>
 
@@ -132,6 +132,36 @@
           </div>
 
         </div>
+
+        <!-- PSP: Confidence + Priors + Top Words (injected by JS, hidden until result) -->
+        <div id="psp-detail" class="formula-block" style="margin-top:1.5rem;display:none;" aria-live="polite">
+          <span class="formula-label">PSP ANALYSIS</span>
+          <!-- Confidence row -->
+          <div style="display:flex;justify-content:space-between;align-items:baseline;margin-top:0.75rem;">
+            <span style="font-size:0.62rem;font-weight:700;letter-spacing:0.15em;color:rgba(255,255,255,0.5);">CONFIDENCE</span>
+            <span id="confidence-label" style="font-size:1rem;font-weight:900;letter-spacing:-0.02em;">—</span>
+          </div>
+          <!-- Prior probabilities row -->
+          <div style="display:flex;gap:2rem;margin-top:0.6rem;">
+            <div>
+              <span style="font-size:0.55rem;font-weight:700;letter-spacing:0.15em;color:rgba(255,255,255,0.4);display:block;">P(HAM) PRIOR</span>
+              <span id="prior-ham-val" style="font-size:0.95rem;font-weight:900;">—</span>
+            </div>
+            <div>
+              <span style="font-size:0.55rem;font-weight:700;letter-spacing:0.15em;color:rgba(255,255,255,0.4);display:block;">P(SPAM) PRIOR</span>
+              <span id="prior-spam-val" style="font-size:0.95rem;font-weight:900;">—</span>
+            </div>
+            <div>
+              <span style="font-size:0.55rem;font-weight:700;letter-spacing:0.15em;color:rgba(255,255,255,0.4);display:block;">THRESHOLD</span>
+              <span id="threshold-val" style="font-size:0.95rem;font-weight:900;">—</span>
+            </div>
+          </div>
+          <!-- Top contributing words -->
+          <div style="margin-top:0.85rem;">
+            <span style="font-size:0.55rem;font-weight:700;letter-spacing:0.15em;color:rgba(255,255,255,0.4);display:block;margin-bottom:0.4rem;">TOP CONTRIBUTING WORDS</span>
+            <div id="top-words-list" style="display:flex;flex-wrap:wrap;gap:0.4rem;"></div>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -158,9 +188,17 @@
             <span class="stat-number" id="stat-spam-count">—</span>
             <span class="stat-label">SPAM MESSAGES</span>
           </div>
-          <div class="stat-block stat-block--accent" id="stat-acc">
+          <div class="stat-block stat-block--accent" id="stat-acc"
+               onclick="retrainModel()"
+               title="Click to retrain with a new random split"
+               style="cursor:pointer;"
+               role="button"
+               tabindex="0"
+               aria-label="Retrain model — click to retrain with a new random split"
+               onkeydown="if(event.key==='Enter'||event.key===' ')retrainModel()">
             <span class="stat-number" id="stat-accuracy">—</span>
             <span class="stat-label">MODEL ACCURACY</span>
+            <span id="retrain-status" style="font-size:0.55rem;font-weight:700;letter-spacing:0.12em;opacity:0.5;margin-top:0.2rem;">CLICK TO RETRAIN</span>
           </div>
         </div>
 
